@@ -1,0 +1,242 @@
+# Cyber-Physical Impact Analysis – Water Tank Simulation
+
+## Project Overview
+
+This repository contains the Python simulation software used for the degree project:
+
+**Cyber-Physical Impact Analysis: Simulating Man-in-the-Middle Attacks on Industrial Control Systems**
+
+The purpose of the project is to analyze how manipulated sensor information can affect the physical behavior of a simulated industrial control system. The system is modeled as a simplified water tank control loop with a sensor, proportional controller, pump, and physical water tank process.
+
+The project does **not** implement a real network-level Man-in-the-Middle attack. It does not include packet interception, ARP spoofing, PLC communication, SCADA systems, or industrial network protocols. Instead, it models the effect of MITM-style sensor-channel manipulation at the signal level, where the value received by the controller is modified, delayed, or replaced.
+
+The focus of the project is physical impact analysis, not intrusion detection or real cyberattack implementation.
+
+---
+
+## Simulated System
+
+The simulated control loop consists of:
+
+* **Water tank** – the physical process
+* **Sensor** – measures the real water level
+* **Controller** – calculates the pump inflow based on the measured value
+* **Pump** – adds water to the tank
+* **Sensor-channel manipulation logic** – changes the sensor value before it reaches the controller
+
+The controller attempts to keep the water level close to a setpoint of **10 units**.
+
+---
+
+## Implemented Scenarios
+
+The software includes the following scenarios:
+
+1. **Normal operation**
+   The controller receives the correct sensor value.
+
+2. **Sensor manipulation attack**
+   An offset is added to the real sensor value before it reaches the controller.
+
+3. **Delay attack**
+   The controller receives an old sensor value instead of the current value.
+
+4. **False sensor value injection**
+   The real sensor value is replaced with a constant false value.
+
+5. **Sensitivity analysis**
+   Selected parameters are varied to study how the physical impact changes.
+
+---
+
+## Requirements
+
+The software requires Python 3 and the following libraries:
+
+```bash
+numpy
+matplotlib
+pandas
+```
+
+Install the required libraries using:
+
+```bash
+pip install numpy matplotlib pandas
+```
+
+On some systems, use:
+
+```bash
+python -m pip install numpy matplotlib pandas
+```
+
+or:
+
+```bash
+py -m pip install numpy matplotlib pandas
+```
+
+---
+
+## How to Run the Software
+
+Open a terminal in the project folder and run the desired Python script.
+
+### Run the combined base comparison
+
+```bash
+python combined_attack_comparison.py
+```
+
+This script runs normal operation, sensor manipulation, delay attack, and false injection attack, then generates comparison graphs and performance metrics.
+
+### Run the delay attack analysis
+
+```bash
+python delay_attack_analysis.py
+```
+
+This script compares normal operation with a delay attack. It can be used to test different attack start times, such as starting the delay attack at 2 seconds.
+
+### Run the false injection attack analysis
+
+```bash
+python false_injection_attack.py
+```
+
+This script compares normal operation with false sensor value injection.
+
+### Run the sensitivity analysis
+
+```bash
+python sensitivity_analysis.py
+```
+
+This script performs sensitivity analysis by varying selected parameters such as attack duration, attack timing, delay length, false injected value, sensor offset, and controller gain.
+
+If `python` does not work on Windows, try:
+
+```bash
+py script_name.py
+```
+
+Example:
+
+```bash
+py sensitivity_analysis.py
+```
+
+---
+
+## Main Files
+
+| File                                | Description                                                                             |
+| ----------------------------------- | --------------------------------------------------------------------------------------- |
+| `combined_attack_comparison.py`     | Runs the base comparison between normal operation and all attack scenarios.             |
+| `comparison_with_attack_metrics.py` | Compares normal operation with one sensor manipulation scenario and calculates metrics. |
+| `delay_attack_analysis.py`          | Runs the delay attack simulation and generates graphs and metrics.                      |
+| `false_injection_attack.py`         | Runs the false sensor value injection simulation.                                       |
+| `sensitivity_analysis.py`           | Runs sensitivity analysis and saves CSV files and plots.                                |
+| `gdid.py`                           | Earlier/working version of the water tank simulation.                                   |
+| `water_tank_mitm_simulation.py.py`  | Earlier simulation script for the water tank model and sensor manipulation.             |
+
+---
+
+## Generated Output Files
+
+The scripts generate result files such as:
+
+* Water level comparison graphs
+* Pump inflow/controller output graphs
+* Deviation from setpoint graphs
+* CSV files with calculated performance metrics
+* Sensitivity analysis plots and tables
+
+Examples of output files:
+
+```text
+figure_1_water_level_comparison.png
+figure_2_pump_inflow_comparison.png
+figure_3_deviation_comparison.png
+base_comparison_metrics.csv
+all_sensitivity_results.csv
+delay_figure_1_normal_vs_delay_water_level.png
+delay_figure_2_delayed_sensor_values.png
+```
+
+The sensitivity analysis script saves its outputs in the folder:
+
+```text
+sensitivity_outputs/
+```
+
+---
+
+## Performance Metrics
+
+The physical impact is evaluated using the following metrics:
+
+* **Overshoot** – how much the water level exceeds the setpoint
+* **Maximum deviation** – largest distance from the setpoint
+* **Maximum deviation during attack** – largest deviation during the attack interval
+* **Mean deviation during attack** – average deviation during the attack interval
+* **Steady-state error** – remaining error at the end of the simulation
+* **Output boundedness** – whether the water level stays inside the safe range
+
+The safe operating range used in the project is:
+
+```text
+0 to 15 units
+```
+
+---
+
+## Reproducing the Results
+
+To reproduce the main results:
+
+1. Install Python and the required libraries.
+2. Open a terminal in the project folder.
+3. Run:
+
+```bash
+python sensitivity_analysis.py
+```
+
+4. Check the generated output folder:
+
+```text
+sensitivity_outputs/
+```
+
+5. Use the generated figures and CSV files to compare the results with the thesis report.
+
+To reproduce the additional early delay attack test:
+
+1. Open `delay_attack_analysis.py`.
+2. Set:
+
+```python
+attack_start = 20
+attack_end = 100
+delay_steps = 40
+```
+
+3. Run:
+
+```bash
+python delay_attack_analysis.py
+```
+
+This starts the delay attack at 2 seconds with a 4-second delay.
+
+---
+
+## Important Limitation
+
+This software is a simulation tool. It does not perform a real network attack and does not interact with real industrial equipment.
+
+The attack scenarios should be understood as abstract sensor-channel manipulation models. They are used to study how corrupted sensor information can affect the physical behavior of a control loop.
+
+The project is intended for educational and analytical purposes only.
